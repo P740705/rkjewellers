@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#b8860b">
+<title>আর কে জুয়েলার্স — স্মার্ট জুয়েলারি ক্যালকুলেটর</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:12px;background:linear-gradient(135deg,#f5ead0,#fff8e8 45%,#ead7a5);font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif;color:#222;min-height:100vh}
+.card{max-width:520px;margin:auto;background:rgba(255,255,255,.95);border-radius:20px;padding:16px;box-shadow:0 10px 32px #6b4f0030;border:1px solid #d4af3780}.rklogo{text-align:center;margin:0 0 7px;padding:10px 0 4px;background:linear-gradient(180deg,#5d4100,#9d7200)}.rkmark{width:58px;height:58px;margin:auto;border:3px solid #f7e7b0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;color:#7b5700;background:linear-gradient(145deg,#fff4c7,#d4af37);letter-spacing:-1px;box-shadow:inset 0 0 0 3px #fff8dc,0 2px 10px #3d280080}.rkname{font-size:18px;font-weight:900;letter-spacing:2px;color:#fff4c7;margin-top:4px;text-shadow:0 1px 3px #3d2800}.rkline{width:110px;height:2px;background:#f7e7b0;margin:3px auto 0}
+header{text-align:center;padding:0 0 14px;border-bottom:2px solid #d4af37;margin-bottom:14px;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,#6b4a00,#d4af37,#806000);box-shadow:0 5px 16px #6b4f0030}
+h1{margin:0;padding-top:8px;color:#fff8dc;font-size:25px;text-shadow:0 1px 3px #4b3300}.sub{font-size:12px;color:#fff1bd}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:15px}.tab{border:1px solid #d4af37;background:#fff;color:#805f00;padding:9px 3px;border-radius:8px;font-weight:700;font-size:11px}.tab.active{background:#b8860b;color:#fff}
+.panel{display:none}.panel.active{display:block}.row{display:flex;gap:8px}.group{margin-bottom:12px;flex:1}label{display:block;font-size:13px;font-weight:700;margin-bottom:5px}input,select{width:100%;padding:11px;border:1px solid #ccc;border-radius:8px;font-size:15px;background:#fff}
+.btn{width:100%;border:0;border-radius:8px;padding:12px;background:#b8860b;color:white;font-size:15px;font-weight:800}.green{background:#2e7d32}.orange{background:#e65100}
+.live,.result{margin-top:12px;padding:12px;border-radius:9px;border:1px solid #e2d1a3;background:#fffaf0}.live{border-style:dashed}
+.r{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}.total{border-top:1px dashed #b8860b;margin-top:4px;padding-top:9px;font-size:15px;font-weight:800}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px}th,td{border:1px solid #eee;padding:8px}th{background:#f7eed7;text-align:left}td:last-child{text-align:right;font-weight:800;color:#1769aa}
+.links{display:grid;grid-template-columns:1fr 1fr;gap:8px}.links a{text-decoration:none;text-align:center;padding:10px;background:#f8f9fa;border:1px solid #ddd;border-radius:8px;color:#333;font-size:12px;font-weight:700}
+small{color:#777}.danger{color:#b00020}.footer{text-align:center;font-size:11px;color:#888;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="card">
+<header><div class="rklogo"><div class="rkmark">RK</div><div class="rkname">R K JEWELLERS</div><div class="rkline"></div></div><h1>আর কে জুয়েলার্স</h1><div class="sub">স্মার্ট জুয়েলারি ক্যালকুলেটর</div></header>
+
+<div class="tabs">
+<button class="tab active" onclick="tab('bill',this)">ওজন বিল</button>
+<button class="tab" onclick="tab('money',this)">টাকায় সোনা</button>
+<button class="tab" onclick="tab('v2g',this)">ভরি থেকে গ্রাম</button>
+<button class="tab" onclick="tab('g2v',this)">গ্রাম থেকে ভরি</button>
+<button class="tab" onclick="tab('rate',this)">রেট চার্ট</button>
+<button class="tab" onclick="tab('alloy',this)">খাদ নির্ণয়</button>
+<button class="tab" onclick="tab('ratti',this)">পাথর রতি</button>
+<button class="tab" onclick="tab('paper',this)">আজকের রেট</button>
+<button class="tab" onclick="tab('oldgold',this)">পুরোনো সোনা</button>
+</div>
+
+<section id="bill" class="panel active">
+<div class="row"><div class="group"><label>ওজন (গ্রাম)</label><input id="bg" type="number" step="any" oninput="showWeight()"></div><div class="group"><label>মিলিগ্রাম</label><input id="bm" type="number" step="any" oninput="showWeight()"></div></div>
+<div class="live" id="bLive">০ গ্রাম = ০ ভরি ০ আনা</div>
+<div class="group"><label>১০ গ্রামের সোনার রেট (₹)</label><input id="br" type="number" step="any"></div>
+<div class="row"><div class="group"><label>মজুরি ধরন</label><select id="bt"><option value="p">শতাংশ (%)</option><option value="f">টাকা (₹)</option></select></div><div class="group"><label>মজুরি</label><input id="bc" type="number" step="any"></div></div>
+<div class="group"><label>GST (%)</label><input id="gst" type="number" value="3" step="any"></div>
+<button class="btn" onclick="bill()">বিল হিসাব করুন</button>
+<div class="result" id="bres" style="display:none"><div class="r"><span>মোট ওজন</span><b id="bw"></b></div><div class="r"><span>ভরি-আনা</span><b id="bv"></b></div><div class="r"><span>সোনার দাম</span><b id="bp"></b></div><div class="r"><span>মজুরি</span><b id="bmoney"></b></div><div class="r"><span>GST</span><b id="bgst"></b></div><div class="r total"><span>সর্বমোট বিল</span><b id="btot"></b></div></div>
+</section>
+
+<section id="money" class="panel">
+<div class="group"><label>কাস্টমারের বাজেট (₹)</label><input id="mb" type="number" step="any" oninput="money()"></div>
+<div class="group"><label>১০ গ্রামের রেট (₹)</label><input id="mr" type="number" step="any" oninput="money()"></div>
+<div class="result" id="mres" style="display:none"><div class="r"><span>১ গ্রামের দর</span><b id="m1"></b></div><div class="r"><span>মোট সোনা</span><b id="mg"></b></div><div class="r total"><span>ভরি-আনা</span><b id="mv"></b></div></div>
+</section>
+
+<section id="v2g" class="panel">
+<h3 style="margin-top:0;color:#b8860b">ভরি থেকে গ্রাম</h3>
+<div class="group"><label>ভরি</label><input id="vgV" type="number" step="any" placeholder="যেমন: 1" oninput="v2g()"></div>
+<div class="group"><label>আনা</label><input id="vgA" type="number" step="any" placeholder="যেমন: 8" oninput="v2g()"></div>
+<div class="group"><label>রতি</label><input id="vgR" type="number" step="any" placeholder="যেমন: 2" oninput="v2g()"></div>
+<div class="group"><label>পয়েন্ট</label><input id="vgP" type="number" step="any" placeholder="যেমন: 1" oninput="v2g()"></div>
+<div class="result" id="vgRes" style="display:none"><div class="r total"><span>মোট গ্রাম</span><b id="vgOut"></b></div></div>
+</section>
+
+<section id="g2v" class="panel">
+<h3 style="margin-top:0;color:#b8860b">গ্রাম থেকে ভরি</h3>
+<div class="group"><label>গ্রাম</label><input id="gvG" type="number" step="any" placeholder="যেমন: 9" oninput="g2v()"></div>
+<div class="live" id="gvOut">০ ভরি, ০ আনা, ০ রতি, ০ পয়েন্ট</div>
+</section>
+
+<section id="rate" class="panel">
+<div class="group"><label>১০ গ্রামের রেট (₹)</label><input id="rr" type="number" step="any" oninput="rates()"></div>
+<table id="rt" style="display:none"><thead><tr><th>একক</th><th>মূল্য</th></tr></thead><tbody>
+<tr><td>১০ মিলিগ্রাম</td><td id="r10"></td></tr><tr><td>১০০ মিলিগ্রাম</td><td id="r100"></td></tr><tr><td>১ গ্রাম</td><td id="r1"></td></tr><tr><td>১ আনা (0.729g)</td><td id="ra"></td></tr><tr><td>৪ আনা</td><td id="r4a"></td></tr><tr><td>৮ আনা / আধ ভরি</td><td id="r8a"></td></tr><tr><td>১ ভরি (11.664g)</td><td id="rv"></td></tr><tr><td>৮ গ্রাম</td><td id="r8g"></td></tr><tr><td>১০ গ্রাম</td><td id="r10g"></td></tr><tr><td>১০০ গ্রাম</td><td id="r100g"></td></tr>
+</tbody></table>
+</section>
+
+<section id="alloy" class="panel">
+<div class="row"><div class="group"><label>পাকা সোনা (গ্রাম)</label><input id="ag" type="number" step="any" oninput="alloy()"></div><div class="group"><label>মিলিগ্রাম</label><input id="am" type="number" step="any" oninput="alloy()"></div></div>
+<div class="group"><label>ক্যারেট</label><select id="ak" onchange="alloy()"><option value="22">২২ ক্যারেট</option><option value="21">২১ ক্যারেট</option><option value="18">১৮ ক্যারেট</option></select></div>
+<div class="group"><label>খাদের অনুপাত</label><select id="ar" onchange="alloy()"><option value=".5">৫০% তামা + ৫০% চাঁদ</option><option value=".4">৪০% তামা + ৬০% চাঁদ</option><option value=".6">৬০% তামা + ৪০% চাঁদ</option><option value="1">১০০% তামা</option></select></div>
+<div class="result" id="ares" style="display:none"><div class="r"><span>পাকা সোনা</span><b id="ap"></b></div><div class="r"><span>মোট খাদ</span><b id="aa"></b></div><div class="r"><span>তামা</span><b id="ac"></b></div><div class="r"><span>চাঁদ (রুপা)</span><b id="as"></b></div><div class="r total"><span>তৈরি গয়নার ওজন</span><b id="af"></b></div></div>
+</section>
+
+<section id="ratti" class="panel">
+<div class="row"><div class="group"><label>পাথর (গ্রাম)</label><input id="sg" type="number" step="any" oninput="ratti()"></div><div class="group"><label>মিলিগ্রাম</label><input id="sm" type="number" step="any" oninput="ratti()"></div></div>
+<div class="group"><label>রতির মাপ</label><select id="rs" onchange="ratti()"><option value=".1215">দেশি রতি — 121.5 mg</option><option value=".18">সুনারি রতি — 180 mg</option></select></div>
+<div class="group"><label>প্রতি রতির দর (ঐচ্ছিক)</label><input id="rp" type="number" step="any" oninput="ratti()"></div>
+<div class="result" id="sres" style="display:none"><div class="r"><span>ওজন</span><b id="sw"></b></div><div class="r"><span>ক্যারেট</span><b id="sc"></b></div><div class="r"><span>মোট রতি</span><b id="sr"></b></div><div class="r total" id="spr" style="display:none"><span>পাথরের দাম</span><b id="sp"></b></div></div>
+</section>
+
+<section id="paper" class="panel">
+<div class="links">
+<a href="https://www.anandabazar.com/topic/gold-rate-today" target="_blank">📰 আনন্দবাজার</a>
+<a href="https://eisamay.com/business/gold-rates" target="_blank">📰 এই সময়</a>
+<a href="https://bartamanpatrika.com" target="_blank">📰 বর্তমান</a>
+<a href="https://ibjarates.com" target="_blank">🏛️ IBJA</a>
+</div>
+<div class="live" style="margin-top:12px">আজকের সঠিক বাজারদর দেখতে উপরের নির্ভরযোগ্য উৎসে ক্লিক করুন।</div>
+</section>
+
+
+<section id="oldgold" class="panel">
+  <h3 style="margin-top:0;color:#b8860b">পুরোনো সোনা — টন্স থেকে পাকা সোনা</h3>
+  <div class="row">
+    <div class="group">
+      <label>গহনার ওজন (গ্রাম)</label>
+      <input id="og" type="number" step="any" placeholder="যেমন: 10.500" oninput="oldGold()">
+    </div>
+    <div class="group">
+      <label>মিলিগ্রাম</label>
+      <input id="om" type="number" step="any" placeholder="যেমন: 500" oninput="oldGold()">
+    </div>
+  </div>
+  <div class="group">
+    <label>টন্স / পাকা সোনার নম্বর</label>
+    <input id="ot" type="number" step="any" placeholder="যেমন: 92, 85, 75" oninput="oldGold()">
+  </div>
+  <div class="live">উদাহরণ: টন্স 92 = 92% পাকা সোনা, টন্স 85 = 85%, টন্স 75 = 75%</div>
+  <div class="result" id="ogres" style="display:none">
+    <div class="r"><span>মোট পুরোনো সোনা</span><b id="ogw"></b></div>
+    <div class="r"><span>টন্স</span><b id="ogt"></b></div>
+    <div class="r"><span>পাকা সোনা</span><b id="ogp"></b></div>
+    <div class="r total"><span>খাদ / কমতি</span><b id="ogl"></b></div>
+  </div>
+</section>
+
+<div class="footer">© আর কে জুয়েলার্স • Smart Jewellery System</div>
+</div>
+<script>
+const V=11.664,A=V/16;
+function n(id){return parseFloat(document.getElementById(id).value)||0}
+function moneyfmt(x){return "₹"+Math.round(x).toLocaleString("en-IN")}
+function gram(idg,idm){return n(idg)+n(idm)/1000}
+function vh(g){if(g<=0)return"০ ভরি ০ আনা";let v=Math.floor(g/V),x=g-v*V,a=Math.floor(x/A+1e-4);x-=a*A;let r=Math.floor(x/(A/6)+1e-4),p=(g/(V/100)).toFixed(1),s=[];if(v)s.push(v+" ভরি");if(a)s.push(a+" আনা");if(r)s.push(r+" রতি");return(s.join(" ")||"০ আনা")+" ("+p+" পয়েন্ট)"}
+function tab(id,b){document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");b.classList.add("active")}
+function showWeight(){let g=gram("bg","bm");document.getElementById("bLive").textContent=g?g.toFixed(3)+" গ্রাম = "+vh(g):"০ গ্রাম = ০ ভরি ০ আনা"}
+function bill(){let g=gram("bg","bm"),r=n("br");if(!g||!r)return alert("সঠিক ওজন ও রেট লিখুন।");let metal=g*r/10,c=n("bc"),make=document.getElementById("bt").value==="p"?metal*c/100:c,sub=metal+make,t=sub*n("gst")/100,total=sub+t;document.getElementById("bw").textContent=g.toFixed(3)+" গ্রাম";document.getElementById("bv").textContent=vh(g);document.getElementById("bp").textContent=moneyfmt(metal);document.getElementById("bmoney").textContent=moneyfmt(make);document.getElementById("bgst").textContent=moneyfmt(t);document.getElementById("btot").textContent=moneyfmt(total);document.getElementById("bres").style.display="block"}
+function money(){let b=n("mb"),r=n("mr");if(b&&r){let p=r/10,g=b/p;document.getElementById("m1").textContent="₹"+p.toFixed(2);document.getElementById("mg").textContent=g.toFixed(3)+" গ্রাম ("+Math.round(g*1000)+" মিলি)";document.getElementById("mv").textContent=vh(g);document.getElementById("mres").style.display="block"}}
+function v2g(){let v=n("vgV"),a=n("vgA"),r=n("vgR"),p=n("vgP");let g=v*V+a*A+r*(A/6)+p*(V/100);if(g){document.getElementById("vgOut").textContent=g.toFixed(3)+" গ্রাম";document.getElementById("vgRes").style.display="block"}else document.getElementById("vgRes").style.display="none"}
+function g2v(){let g=n("gvG");if(!g){document.getElementById("gvOut").textContent="০ ভরি, ০ আনা, ০ রতি, ০ পয়েন্ট";return}let v=Math.floor(g/V),x=g-v*V,a=Math.floor(x/A+1e-9);x-=a*A;let r=Math.floor(x/(A/6)+1e-9);x-=r*(A/6);let p=Math.round(x/(V/100));if(p>=100){p=0;r++;}if(r>=6){r=0;a++;}if(a>=16){a=0;v++;}document.getElementById("gvOut").textContent=v+" ভরি, "+a+" আনা, "+r+" রতি, "+p+" পয়েন্ট"}
+function rates(){let r=n("rr");if(!r){document.getElementById("rt").style.display="none";return}let g=r/10,vals=[g/100,g/10,g,g*A,g*A*4,g*A*8,g*V,g*8,r,g*100],ids=["r10","r100","r1","ra","r4a","r8a","rv","r8g","r10g","r100g"];vals.forEach((x,i)=>document.getElementById(ids[i]).textContent=moneyfmt(x));document.getElementById("rt").style.display="table"}
+function alloy(){let p=gram("ag","am"),k=n("ak");if(!p){document.getElementById("ares").style.display="none";return}let a=p*(24-k)/k,f=p+a,cp=n("ar"),c=a*cp,s=a-c;document.getElementById("ap").textContent=p.toFixed(3)+" গ্রাম";document.getElementById("aa").textContent=a.toFixed(3)+" গ্রাম";document.getElementById("ac").textContent=c.toFixed(3)+" গ্রাম";document.getElementById("as").textContent=s.toFixed(3)+" গ্রাম";document.getElementById("af").textContent=f.toFixed(3)+" গ্রাম ("+vh(f)+")";document.getElementById("ares").style.display="block"}
+function ratti(){let g=gram("sg","sm");if(!g){document.getElementById("sres").style.display="none";return}let r=g/n("rs"),ct=g/.2;document.getElementById("sw").textContent=g.toFixed(3)+" গ্রাম";document.getElementById("sc").textContent=ct.toFixed(2)+" ct";document.getElementById("sr").textContent=r.toFixed(2)+" রতি";let price=n("rp");if(price){document.getElementById("sp").textContent=moneyfmt(r*price);document.getElementById("spr").style.display="flex"}else document.getElementById("spr").style.display="none";document.getElementById("sres").style.display="block"}
+
+function oldGold(){
+  let g=gram("og","om"), t=n("ot");
+  if(!g || !t){
+    document.getElementById("ogres").style.display="none";
+    return;
+  }
+  let pure=g*t/100, loss=g-pure;
+  document.getElementById("ogw").textContent=g.toFixed(3)+" গ্রাম";
+  document.getElementById("ogt").textContent=t+" টাচ";
+  document.getElementById("ogp").textContent=pure.toFixed(3)+" গ্রাম";
+  document.getElementById("ogl").textContent=loss.toFixed(3)+" গ্রাম";
+  document.getElementById("ogres").style.display="block";
+}
+
+</script>
+</body>
+</html>
